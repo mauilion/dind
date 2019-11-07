@@ -9,12 +9,14 @@ See this twitter poll for a little more color around which of the two folks assu
 []![](./tweet.png)](https://twitter.com/mauilion/status/1145801961666514945?s=20)
 to deploy this container on a node you can run:
 
+For the mount version you can run:
+
 ```
-docker run -ti -v /var/run/docker.sock:/var/run/docker.sock --pid=host --privileged quay.io/mauilion/dind:master bash
+docker run -d --name dind-mount -v /var/run/docker.sock:/var/run/docker.sock quay.io/mauilion/dind:mount
 ```
 
-to deploy this as a pod on a Kubernetes cluster
+For the Priv version:
+```
+docker run -d --name dind-priv --privileged quay.io/mauilion/dind:priv
+```
 
-you can deploy this manifest with:
-
-kubectl apply -f https://git.io/dind-pod.yaml
