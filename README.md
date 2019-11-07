@@ -6,7 +6,7 @@ There are two definitions that are both viable.
 
 See this twitter poll for a little more color around which of the two folks assume is relevant.
 
-![](./tweet.png)
+[]![](./tweet.png)](https://twitter.com/mauilion/status/1145801961666514945?s=20)
 to deploy this container on a node you can run:
 
 ```
