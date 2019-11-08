@@ -23,7 +23,7 @@ push_images:
 	docker push $(DIND_IMAGE):$(MOUNT_TAG)
 	docker push $(DIND_IMAGE):$(PRIV_TAG)
 
-build_k8s: deps build_cluster load_images
+build_k8s: cache build_cluster load_images install_cni
 build_docker: 
 	docker run --rm -ti -v /var/run/docker.sock:/var/run/docker.sock --pid=host --privileged quay.io/mauilion/dind:master bash
 
@@ -31,11 +31,12 @@ build_cluster:
 	kind create cluster --name=$(CLUSTER_NAME) --config=kind/configs/blue.yaml
 
 install_cni:
-	kind get nodes | xargs -n1 -I {} docker exec {} sysctl -w net.ipv4.conf.all.rp_filter=0
+	kind get nodes --name=$(CLUSTER_NAME) | xargs -n1 -I {} docker exec {} sysctl -w net.ipv4.conf.all.rp_filter=0
 	kubectl apply -f kind/cni/canal.yaml
 
 load_images:
-	kind load docker-image $(DIND_IMAGE) --name=$(CLUSTER_NAME)
+	kind load docker-image $(DIND_IMAGE):$(MOUNT_TAG) --name=$(CLUSTER_NAME)
+	kind load docker-image $(DIND_IMAGE):$(PRIV_TAG) --name=$(CLUSTER_NAME)
 
 deploy_apps:
 	export KUBECONFIG=$(shell kind get kubeconfig-path --name='$(CLUSTER_NAME)')
