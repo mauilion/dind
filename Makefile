@@ -24,6 +24,7 @@ push_images:
 	docker push $(DIND_IMAGE):$(PRIV_TAG)
 
 build_k8s: cache build_cluster load_images install_cni
+
 build_docker: 
 	docker run --rm -ti -v /var/run/docker.sock:/var/run/docker.sock --pid=host --privileged quay.io/mauilion/dind:master bash
 
