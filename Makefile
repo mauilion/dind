@@ -12,7 +12,7 @@ KUBEADM_TOKEN = $(shell sudo docker exec $(CLUSTER_NAME)-control-plane kubeadm t
 KUBECONFIG=$(shell kind get kubeconfig-path --name='$(CLUSTER_NAME)')
 export KUBECONFIG
 
-.PHONY: cache_docker cache_k8s build_images push_images init_k8s clean_k8s init_docker clean_docker install_cni load_images deploy_apps join unjoin clean_all 
+.PHONY: cache_docker cache_k8s build_images push_images init_k8s clean_k8s init_docker clean_docker install_cni load_images join unjoin clean_all 
 
 #BUILD STUFF
 
@@ -48,8 +48,12 @@ clean_docker:
 #KUBERNETES STUFF
 cache_k8s:
 	cat kind/cni/images | xargs -I {} docker pull {}
+	docker pull alpine:3.7
+	docker pull nginx:stable
 
-init_k8s: load_images install_cni install_psp
+init_k8s: create_cluster load_images install_cni install_psp
+
+create_cluster:
 	kind create cluster --name=$(CLUSTER_NAME) --config=kind/configs/blue.yaml
 
 clean_k8s:
@@ -67,10 +71,8 @@ install_psp:
 load_images:
 	kind load docker-image $(DIND_IMAGE):$(MOUNT_TAG) --name=$(CLUSTER_NAME)
 	kind load docker-image $(DIND_IMAGE):$(PRIV_TAG) --name=$(CLUSTER_NAME)
-
-deploy_apps: join
-	export KUBECONFIG=$(shell kind get kubeconfig-path --name='$(CLUSTER_NAME)')
-	kubectl apply -f kind/manifests/
+	kind load docker-image alpine:3.7 --name=$(CLUSTER_NAME)
+	kind load docker-image nginx:stable --name=$(CLUSTER_NAME)
 
 join:
 	sudo systemctl unmask kubelet
