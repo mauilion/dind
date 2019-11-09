@@ -55,22 +55,24 @@ pe "docker exec -ti docker-priv docker ps"
 pe "docker ps"
 p  "in this case we don't see the same!"
 clear
-p  "since the docker socket is running in the container directly we can only expose what the container has access to :)"
-pe "docker exec -ti docker-priv touch /etc/flag"
-pe "ls -al /etc/flag"
-pe "docker exec -ti docker-priv docker run --rm -v /etc:/host/etc bash:flat rm /host/etc/flag"
-pe "docker exec -ti docker-priv ls -al /etc/flag"
-p  "it's gone!"
-clear
 p  "Because this is all still process isolation we can still see the processes in ps!"
 pe "pgrep -a true-blue"
 pe "pstree -aps $(pgrep true-blue)"
 pe "pgrep -a true-red"
 pe "pstree -aps $(pgrep true-red)"
+p  "this output describes that the process are isolated differently!"
+clear
+p  "one more thing! Now that we are using this form of dind"
+p  "we can only expose what's running in the context of the container!"
+pe "docker exec -ti docker-priv touch /etc/flag"
+p  "this file doesn't exist on the node only in the container"
+pe "ls -al /etc/flag"
+pe "docker exec -ti docker-priv docker run --rm -v /etc:/host/etc bash:flat rm /host/etc/flag"
+pe "docker exec -ti docker-priv ls -al /etc/flag"
+p  "it's gone!"
 p  "that's all for now"
 
 # show a prompt so as not to reveal our true nature after
 # the demo has concluded
 p ""
 make clean_docker
-docker stop red

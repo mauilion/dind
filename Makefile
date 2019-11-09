@@ -43,12 +43,13 @@ init_docker:
 clean_docker:
 	docker stop docker-mount 2>/dev/null || true
 	docker stop docker-priv 2>/dev/null || true
+	docker stop red 2>/dev/null || true
 
 #KUBERNETES STUFF
 cache_k8s:
 	cat kind/cni/images | xargs -I {} docker pull {}
 
-init_k8s: load_images install_cni
+init_k8s: load_images install_cni install_psp
 	kind create cluster --name=$(CLUSTER_NAME) --config=kind/configs/blue.yaml
 
 clean_k8s:
@@ -59,6 +60,9 @@ install_cni:
 	cat kind/cni/images | xargs -I {} kind load docker-image {} --name=$(CLUSTER_NAME)
 	kind get nodes --name=$(CLUSTER_NAME) | xargs -n1 -I {} docker exec {} sysctl -w net.ipv4.conf.all.rp_filter=0
 	kubectl apply -f kind/cni/canal.yaml
+
+install_psp:
+	kubectl apply -f kind/psp/
 
 load_images:
 	kind load docker-image $(DIND_IMAGE):$(MOUNT_TAG) --name=$(CLUSTER_NAME)
