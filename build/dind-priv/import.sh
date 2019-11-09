@@ -3,5 +3,5 @@
 path="/images/quay.io/mauilion"
 name="quay.io/mauilion"
 
-docker import ${path}/dind\:blue ${name}/dind:blue
-docker import ${path}/bash\:flat ${name}/bash:flat
+docker load -i ${path}/dind\:blue
+docker load -i ${path}/bash\:flat

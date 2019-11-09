@@ -7,5 +7,5 @@ COPY --from=nsenter /nsenter /usr/local/bin/nsenter
 COPY --from=pause /pause /pause
 COPY bash:flat /images/quay.io/mauilion/bash:flat
 COPY dind:blue  /images/quay.io/mauilion/dind:blue
-COPY import.sh /images.sh
+COPY import.sh /import.sh
 CMD ["/usr/bin/dockerd"]
