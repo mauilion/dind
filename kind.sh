@@ -32,6 +32,8 @@ DEMO_PROMPT="${GREEN}➜ ${CYAN}\W "
 # show a prompt so as not to reveal our true nature after
 # the demo has concluded
 make clean_docker
+make init_k8s
+make join
 kubectl create ns secure
 kubectl create rolebinding secure-admin -n secure --clusterrole=admin --serviceaccount=secure:default
 create-kubeconfig default -n secure > norm.kubeconfig
