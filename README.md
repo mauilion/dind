@@ -20,3 +20,7 @@ For the Priv version:
 docker run -d --name dind-priv --privileged quay.io/mauilion/dind:priv
 ```
 
+
+Copyright © 1998 - 2019 VMware, Inc. All rights reserved.
+
+
